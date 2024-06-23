@@ -1,35 +1,16 @@
 from rest_framework import viewsets
 from .models import (
-    AboutUniversity, AboutCollege, Faculty, Lyceum, Professor, Student, Event, EventImage, Library,
+    AboutUniversity, AboutCollege, Faculty, Lyceum, Student, Event, EventImage, Library,
     JobTitle, LanguageKnowledge, LaborActivity, Management, Structure, Recruitment,
     Document, Direction, DSC, Сontacts, OtherLinks, Followus
 )
 from .serializers import (
-    AboutUniversitySerializer, AboutCollegeSerializer, FacultySerializer, LyceumSerializer, ProfessorSerializer,
-    StudentSerializer, EventSerializer, EventImageSerializer, LibrarySerializer, JobTitleSerializer,
+    AboutUniversitySerializer, AboutCollegeSerializer, FacultySerializer, LyceumSerializer,
+    EventSerializer, EventImageSerializer, LibrarySerializer, JobTitleSerializer,
     LanguageKnowledgeSerializer, LaborActivitySerializer, ManagementSerializer, StructureSerializer,
     RecruitmentSerializer, DocumentSerializer, DirectionSerializer, DSCSerializer, OtherLinksSerializer,
     FollowusSerializer, СontactsSerializer
 )
-
-# univer_pro/univer_app/views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentNumber
-
-
-class CheckStudentNumber(APIView):
-    def post(self, request, format=None):
-        student_number = request.data.get('student_number')
-        if not student_number:
-            return Response({'error': 'Student number is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            student_number_obj = StudentNumber.objects.get(number=student_number)
-            return Response({'success': True, 'code': '1234'})  # Пример кода для доступа к библиотеке
-        except StudentNumber.DoesNotExist:
-            return Response({'error': 'Student number not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AboutUniversityViewSet(viewsets.ModelViewSet):
@@ -52,14 +33,63 @@ class LyceumViewSet(viewsets.ModelViewSet):
     serializer_class = LyceumSerializer
 
 
-class ProfessorViewSet(viewsets.ModelViewSet):
-    queryset = Professor.objects.all()
-    serializer_class = ProfessorSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Student
+from .serializers import StudentRegisterSerializer, VerifyCodeSerializer
 
 
-class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+class StudentRegisterView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = StudentRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            student_id = serializer.validated_data['student_id']
+            try:
+                student = Student.objects.get(student_id=student_id)
+                if student.is_verified:
+                    return Response({'detail': 'Этот студент уже верифицирован.'}, status=status.HTTP_400_BAD_REQUEST)
+                # Отправка кода подтверждения (реализуйте логику отправки, например, через SMS)
+                return Response({'detail': 'Код подтверждения отправлен.'}, status=status.HTTP_200_OK)
+            except Student.DoesNotExist:
+                return Response({'detail': 'Ваш номер не найден в базе студентов.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyCodeView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = VerifyCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            student_id = serializer.validated_data['student_id']
+            verification_code = serializer.validated_data['verification_code']
+            try:
+                student = Student.objects.get(student_id=student_id)
+                if student.verification_code == verification_code:
+                    student.is_verified = True
+                    student.save()
+                    return Response({'detail': 'Вы успешно вошли в библиотеку.'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'detail': 'Ошибка: неверный код подтверждения.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            except Student.DoesNotExist:
+                return Response({'detail': 'Ваш номер не найден в базе студентов.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.permissions import IsAuthenticated
+
+
+class LibraryViewSet(viewsets.ModelViewSet):
+    queryset = Library.objects.all()
+    serializer_class = LibrarySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        student_id = self.request.user.student.student_id
+        if Student.objects.filter(student_id=student_id, is_verified=True).exists():
+            return super().get_queryset()
+        else:
+            return Library.objects.none()
 
 
 class EventViewSet(viewsets.ModelViewSet):

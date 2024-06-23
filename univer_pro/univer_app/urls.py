@@ -2,11 +2,11 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
-    AboutUniversityViewSet, AboutCollegeViewSet, LyceumViewSet, FacultyViewSet, ProfessorViewSet, StudentViewSet,
+    AboutUniversityViewSet, AboutCollegeViewSet, LyceumViewSet, FacultyViewSet,
     EventViewSet, LibraryViewSet, JobTitleViewSet, LanguageKnowledgeViewSet,
     LaborActivityViewSet, ManagementViewSet, StructureViewSet, RecruitmentViewSet, DocumentViewSet,
     DirectionViewSet, DocumentationViewSet, DSCViewSet, СontactsViewSetr, OtherLinksViewSet, FollowusViewSet,
-    LinkViewSet, NewsViewSet, CheckStudentNumber
+    LinkViewSet, NewsViewSet, StudentRegisterView, VerifyCodeView
 )
 
 
@@ -38,18 +38,8 @@ urlpatterns = [
          FacultyViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
          name='faculty detail'),
 
-    path('professor/', ProfessorViewSet.as_view({'get': 'list', 'post': 'create'}),
-         name='professor list'),
-    path('professor/<int:pk>/',
-         ProfessorViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
-         name='professor detail'),
-
-    path('student/', StudentViewSet.as_view({'get': 'list', 'post': 'create'}),
-         name='student list'),
-    path('student/<int:pk>/',
-         StudentViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
-         name='student detail'),
-    path('check_student_number/', CheckStudentNumber.as_view(), name='check_student_number'),
+    path('student/register/', StudentRegisterView.as_view(), name='student-register'),
+    path('student/verify/', VerifyCodeView.as_view(), name='student-verify'),
 
     # evets
     path('event/', EventViewSet.as_view({'get': 'list', 'post': 'create'}),

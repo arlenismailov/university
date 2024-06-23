@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    AboutUniversity, AboutCollege, Faculty, Professor, Student, Event, EventImage, Library,
+    AboutUniversity, AboutCollege, Faculty, Student, Event, EventImage, Library,
     JobTitle, LanguageKnowledge, LaborActivity, Management, Structure, Recruitment,
     Document, Direction, DSC, OtherLinks, Сontacts, Followus, Link, News
 )
@@ -8,7 +8,6 @@ from .models import (
 admin.site.register(AboutUniversity)
 admin.site.register(AboutCollege)
 admin.site.register(Faculty)
-admin.site.register(Professor)
 admin.site.register(Student)
 ''' низу 2 класса для фото события '''
 

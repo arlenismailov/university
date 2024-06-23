@@ -39,31 +39,21 @@ class Faculty(models.Model):
 ''' пользователи '''
 
 
-class Professor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    department = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    bio = models.TextField()
+class Student(models.Model):
+    student_id = models.IntegerField(unique=True)
+    phone_number = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.title}"
+        return str(self.student_id)
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    department = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    enrollment_date = models.DateField()
-    graduation_date = models.DateField(null=True, blank=True)
+    student_id = models.IntegerField(unique=True)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username
-
-
-class StudentNumber(models.Model):
-    number = models.CharField(max_length=20, unique=True)
-
-    def __str__(self):
-        return self.number
+        return str(self.student_id)
 
 
 '''Событие'''

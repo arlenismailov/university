@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from .models import (
-    AboutUniversity, AboutCollege, Faculty, Lyceum, Professor, Student, Event, EventImage, Library,
+    AboutUniversity, AboutCollege, Faculty, Lyceum, Student, Student, Event, EventImage, Library,
     JobTitle, LanguageKnowledge, LaborActivity, Management, Structure, Recruitment,
     Document, Direction, Numbers, Aboutthecollege, Requirem, Documentation, Сontacts, OtherLinks, Followus,
-    StudentNumber,
+    Link, News, Numbers, Aboutthecollege, Requirem, Documentation, DSC
 )
 
 
@@ -31,22 +31,19 @@ class LyceumSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProfessorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Professor
-        fields = '__all__'
+from rest_framework import serializers
+from .models import Student
 
 
-class StudentSerializer(serializers.ModelSerializer):
+class StudentRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ['student_id']
 
 
-class StudentNumberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StudentNumber
-        fields = '__all__'
+class VerifyCodeSerializer(serializers.Serializer):
+    student_id = serializers.IntegerField()
+    verification_code = serializers.CharField(max_length=6)
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -122,8 +119,6 @@ class DirectionSerializer(serializers.ModelSerializer):
 
 '''Об университете бүттү '''
 
-from .models import Numbers, Aboutthecollege, Requirem, Documentation, DSC
-
 
 class NumbersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -178,9 +173,6 @@ class FollowusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Followus
         fields = ['id', 'link']
-
-
-from .models import Link, News
 
 
 class LinkSerializer(serializers.ModelSerializer):
