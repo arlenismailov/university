@@ -59,6 +59,13 @@ class Student(models.Model):
         return self.user.username
 
 
+class StudentNumber(models.Model):
+    number = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return self.number
+
+
 '''Событие'''
 
 
@@ -252,6 +259,7 @@ class News(models.Model):
     description = models.TextField(null=True, blank=True)
     img = models.ImageField(upload_to='news/img/', null=True, blank=True)
     video = models.FileField(upload_to='news/video/', null=True, blank=True)
+    pdf = models.FileField(upload_to='news/pdf/', null=True, blank=True)
     link = models.ManyToManyField(Link, verbose_name='link', blank=True)  # Removed max_length
     create = models.DateField(auto_now_add=True)
 

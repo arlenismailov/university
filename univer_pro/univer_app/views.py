@@ -12,6 +12,25 @@ from .serializers import (
     FollowusSerializer, СontactsSerializer
 )
 
+# univer_pro/univer_app/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import StudentNumber
+
+
+class CheckStudentNumber(APIView):
+    def post(self, request, format=None):
+        student_number = request.data.get('student_number')
+        if not student_number:
+            return Response({'error': 'Student number is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student_number_obj = StudentNumber.objects.get(number=student_number)
+            return Response({'success': True, 'code': '1234'})  # Пример кода для доступа к библиотеке
+        except StudentNumber.DoesNotExist:
+            return Response({'error': 'Student number not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class AboutUniversityViewSet(viewsets.ModelViewSet):
     queryset = AboutUniversity.objects.all()

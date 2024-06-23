@@ -3,6 +3,7 @@ from .models import (
     AboutUniversity, AboutCollege, Faculty, Lyceum, Professor, Student, Event, EventImage, Library,
     JobTitle, LanguageKnowledge, LaborActivity, Management, Structure, Recruitment,
     Document, Direction, Numbers, Aboutthecollege, Requirem, Documentation, Сontacts, OtherLinks, Followus,
+    StudentNumber,
 )
 
 
@@ -39,6 +40,12 @@ class ProfessorSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
+        fields = '__all__'
+
+
+class StudentNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentNumber
         fields = '__all__'
 
 

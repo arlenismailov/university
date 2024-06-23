@@ -6,7 +6,7 @@ from .views import (
     EventViewSet, LibraryViewSet, JobTitleViewSet, LanguageKnowledgeViewSet,
     LaborActivityViewSet, ManagementViewSet, StructureViewSet, RecruitmentViewSet, DocumentViewSet,
     DirectionViewSet, DocumentationViewSet, DSCViewSet, СontactsViewSetr, OtherLinksViewSet, FollowusViewSet,
-    LinkViewSet, NewsViewSet
+    LinkViewSet, NewsViewSet, CheckStudentNumber
 )
 
 
@@ -49,6 +49,8 @@ urlpatterns = [
     path('student/<int:pk>/',
          StudentViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
          name='student detail'),
+    path('check_student_number/', CheckStudentNumber.as_view(), name='check_student_number'),
+
     # evets
     path('event/', EventViewSet.as_view({'get': 'list', 'post': 'create'}),
          name='event list'),
@@ -56,11 +58,8 @@ urlpatterns = [
          EventViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
          name='event detail'),
     # библиотека
-    path('library/', LibraryViewSet.as_view({'get': 'list', 'post': 'create'}),
+    path('library/', LibraryViewSet.as_view({'get': 'list'}),
          name='library list'),
-    path('library/<int:pk>/',
-         LibraryViewSet.as_view({'get': 'retrieve', 'pot': 'update', 'delete': 'destroy'}),
-         name='library detail'),
     # Руководство
     path('management/', ManagementViewSet.as_view({'get': 'list'}),
          name='management list'),
